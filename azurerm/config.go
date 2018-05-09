@@ -142,7 +142,8 @@ type ArmClient struct {
 	keyVaultManagementClient keyVault.BaseClient
 
 	// Monitor
-	monitorAlertRulesClient insights.AlertRulesClient
+	monitorAlertRulesClient         insights.AlertRulesClient
+	monitorDiagnosticSettingsClient insights.DiagnosticSettingsClient
 
 	// Networking
 	applicationGatewayClient        network.ApplicationGatewaysClient
@@ -698,6 +699,12 @@ func (c *ArmClient) registerMonitorClients(endpoint, subscriptionId string, auth
 	arc.Authorizer = auth
 	arc.Sender = autorest.CreateSender(withRequestLogging())
 	c.monitorAlertRulesClient = arc
+
+	monitoringInsightsClient := insights.NewDiagnosticSettingsClientWithBaseURI(endpoint, subscriptionId)
+	setUserAgent(&monitoringInsightsClient.Client)
+	monitoringInsightsClient.Authorizer = auth
+	monitoringInsightsClient.Sender = autorest.CreateSender(withRequestLogging())
+	c.monitorDiagnosticSettingsClient = monitoringInsightsClient
 }
 
 func (c *ArmClient) registerNetworkingClients(endpoint, subscriptionId string, auth autorest.Authorizer, sender autorest.Sender) {
