@@ -183,6 +183,8 @@ func resourceArmKeyVault() *schema.Resource {
 			},
 
 			"tags": tagsSchema(),
+
+			"diagnostic_logging": diagnosticLoggingSchema(),
 		},
 	}
 }
@@ -249,6 +251,8 @@ func resourceArmKeyVaultCreate(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 	}
+
+	createOrDeleteDiagnosticLogging(d.Id(), d.Get("diagnostic_logging"), meta)
 
 	return resourceArmKeyVaultRead(d, meta)
 }
